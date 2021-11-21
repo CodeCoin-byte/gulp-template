@@ -1,0 +1,32 @@
+{
+  "name": "gulp-template",
+  "version": "1.0.0",
+  "description": "gulp minimal template",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gulp",
+    "js",
+    "javascript"
+  ],
+  "author": "Alexander",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.27.7",
+    "compress-images": "^2.0.2",
+    "del": "^6.0.0",
+    "giflossy": "^3.0.41",
+    "gifsicle": "^6.0.3",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-uglify-es": "^3.0.0",
+    "mozjpeg": "^8.0.0",
+    "optipng": "^3.0.0",
+    "svgo": "^2.8.0"
+  }
+}

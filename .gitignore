@@ -1,0 +1,8 @@
+/node_modules/
+*.log
+dist
+src
+.tern-port
+.idea
+.directory
+package-lock.json
