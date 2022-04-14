@@ -1,0 +1,40 @@
+@import './fonts.scss';
+@import './components/font-color';
+
+html, body{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-image: url("@img/jordan-steranka-bZH1OzaOvlM-unsplash.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  p {
+    background-color: bisque;
+    font-family: Bride;
+    font-size: 24px;
+    color: yellow;
+  }
+}
+
+
+
+.container-footer {
+  width: 200px;
+}
+
+span {
+  font-family: 'Sugar Pouch';
+  color: #ffffff;
+  font-size: 48px;
+}
+
+.user-avatar {
+  width: 300px;
+  height: 300px;
+  background-image: url("@img/user-avatar.png");
+  background-size: cover;
+}
+

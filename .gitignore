@@ -1,8 +1,4 @@
-/node_modules/
-*.log
-dist
-src
-.tern-port
-.idea
-.directory
+node_modules
 package-lock.json
+dist
+.directory

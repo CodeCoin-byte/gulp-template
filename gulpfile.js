@@ -1,99 +1,50 @@
-import pkg from 'gulp';
-import browserSync from 'browser-sync';
-import uglify from 'gulp-uglify-es';
-import autoprefixer from 'gulp-autoprefixer';
-import cleancss from 'gulp-clean-css';
-import imagecomp from 'compress-images';
-import del from 'del';
-import htmlmin from 'gulp-htmlmin';
+import gulp from 'gulp';
 
-const { src, dest, parallel, series, watch } = pkg;
+import { path } from './gulp/config/path.js';
+import { plugins } from './gulp/config/plugins.js';
 
 
-function browsersync() {
-	browserSync.create().init({ 
-		server: { baseDir: 'dist/' }, 
-    ghostMode: { clicks: false },
-		notify: false, 
-		online: true 
-	})
+global.app = {
+  isBuild: process.argv.includes('--build'),
+  isDev: !process.argv.includes('--build'),
+  path: path,
+  gulp: gulp,
+  plugins: plugins,
 }
 
-function scripts() {
-	return src([ 
-		'src/assets/js/**/*.js', 
-		])
-	.pipe(uglify.default()) 
-	.pipe(dest('dist/assets/js/')) 
-	.pipe(browserSync.stream()) 
+import { copy } from './gulp/tasks/copy.js';
+import { reset } from './gulp/tasks/reset.js';
+import { html } from './gulp/tasks/html.js';
+import { server } from './gulp/tasks/server.js';
+import { scss } from './gulp/tasks/scss.js';
+import { js } from './gulp/tasks/js.js';
+import { images } from './gulp/tasks/images.js';
+import { otfToTtf, ttfToWoff, copyWoff, fonstsStyle } from './gulp/tasks/fonts.js';
+import { svgSprite } from './gulp/tasks/svgSprite.js';
+import { zip } from './gulp/tasks/zip.js';
+
+function watcher() {
+  gulp.watch(path.watch.files, copy);
+  gulp.watch(path.watch.html, html);
+  gulp.watch(path.watch.scss, scss);
+  gulp.watch(path.watch.js, js);
+  gulp.watch(path.watch.images, images);
 }
 
-function styles() {
-	return src('src/assets/style/*.css') 
-	.pipe(autoprefixer({ grid: true })) 
-	.pipe(cleancss( { level: { 1: { specialComments: 0 } } } )) 
-	.pipe(dest('dist/assets/style/')) 
-	.pipe(browserSync.stream()) 
-}
+export { svgSprite };
 
-async function images() {
-	imagecomp(
-		"src/assets/img/**/*", 
-		"dist/assets/img/", 
-		{ compress_force: false, statistic: true, autoupdate: true }, false, 
-		{ jpg: { engine: "mozjpeg", command: ["-quality", "90"] } }, 
-		{ png: { engine: "optipng", command: false } },
-		{ svg: { engine: "svgo", command: "--multipass" } },
-		{ gif: { engine: "giflossy", command: ['--lossy=10'] } },
-		function (err, completed) { 
-			if (completed === true) {
-				browserSync.reload()
-			}
-		}
-	)
-}
+const fonts = gulp.series(otfToTtf, ttfToWoff, copyWoff, fonstsStyle);
 
-function cleanimg() {
-	return del('dist/assets/img/**/*', { force: true }) 
-}
+const mainTasks = gulp.series(fonts, gulp.parallel(copy, html, scss, js, images));
 
-function html() {
-  return src('src/*.html')
-	.pipe(htmlmin({ collapseWhitespace: true }))
-	.pipe(dest('dist/'))
-	.pipe(browserSync.stream())
-}
+const dev = gulp.series(reset, mainTasks, gulp.parallel(watcher, server));
 
-function buildcopy() {
-	return src([ 
-		'src/assets/js/**/*.json',
-		], { base: 'src' }) 
-	.pipe(dest('dist')) 
-}
- 
-function cleandist() {
-	return del('dist/**/*', { force: true }) 
-}
+const build = gulp.series(reset, mainTasks);
 
-function startwatch() {
- 
-	
-	watch('src/assets/js/**/*.js', scripts);
-	
-	
-	watch('src/assets/style/**/*', styles);
- 
-	
-	watch('src/**/*.html', html);
- 
+const deployZip = gulp.series(reset, mainTasks, zip);
 
-	watch('src/assets/img/**/*', images);
- 
-}
+export { dev };
+export { build };
+export { deployZip };
 
- 
-export { scripts, styles, images, cleandist, cleanimg, buildcopy, html }
- 
-export let assets = series(scripts, styles, images ,buildcopy)
-export let build = series(cleandist, images, scripts, styles, buildcopy, html)
-export default series( scripts, styles, buildcopy, html, parallel(browsersync, startwatch))
+gulp.task('default', dev);
