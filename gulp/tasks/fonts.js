@@ -64,7 +64,6 @@ export const fonstsStyle = () => {
               fontWeight = 400;
             }
             fs.appendFile(fontsFile, `@font-face {\n\tfont-family: ${fontName};\n\tfont-display: swap;\n\tsrc: url("../fonts/${fontFileName}.${format}") format("${format}");\n\tfontWeight: ${fontWeight};\n\tfont-style: normal;\n}\r\n`, cb);
-            newFileOnly = fontFileName;
         }
       } else {
         console.log('файл scss/fonts.scss уже существует. Для обновления нужно его удалить!');
